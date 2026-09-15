@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LOOPA - More Than TikTok</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FF0050">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600&family=Syne:wght@800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#fff;font-family:'Space Grotesk',sans-serif;overflow:hidden;height:100vh}
+.top{position:fixed;top:0;left:0;right:0;z-index:20;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(to bottom,rgba(0,0,0,0.8),transparent)}
+.logo{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-1px}.logo b{color:#FF0050}
+.feed{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory}
+.feed::-webkit-scrollbar{display:none}
+.card{height:100vh;width:100%;scroll-snap-align:start;position:relative;background:#111}
+.card video{width:100%;height:100%;object-fit:cover}
+.right{position:absolute;right:10px;bottom:110px;display:flex;flex-direction:column;gap:20px;z-index:5}
+.btn{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid rgba(255,255,255,.2)}
+.btn.liked{background:#FF0050}
+.count{font-size:11px;text-align:center;margin-top:5px;font-weight:700}
+.info{position:absolute;bottom:85px;left:12px;right:80px;text-shadow:0 2px 8px #000}
+.bottom{position:fixed;bottom:0;left:0;right:0;height:70px;background:#000;border-top:1px solid #222;display:flex;justify-content:space-around;align-items:center;z-index:20}
+.nav{font-size:10px;color:#666;text-align:center}.nav.active{color:#fff}.nav i{font-size:23px;display:block;font-style:normal}
+</style>
+</head>
+<body>
+<div class="top"><div class="logo">L<b>O</b>OPA</div><div style="font-size:12px">For You • Friends • LIVE</div><div>⌕</div></div>
+<div class="feed" id="feed"></div>
+<div class="bottom"><div class="nav active"><i>⌂</i>Home</div><div class="nav"><i>◉</i>Discover</div><div class="nav"><i style="background:#fff;color:#000;width:38px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin:0 auto">+</i></div><div class="nav"><i>✉</i>Inbox</div><div class="nav"><i>☺</i>You</div></div>
+<script>
+const defaults=[{user:"@mustapha 🇬🇭",cap:"First LOOPA video! Made in Ghana #loopa",src:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",likes:1204,coms:43},{user:"@ama",cap:"Accra vibes 🔥",src:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",likes:5320,coms:120},{user:"@loopa",cap:"Welcome to LOOPA! Swipe up",src:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",likes:9820,coms:210}];
+let videos=JSON.parse(localStorage.getItem('loopa_v1')||'null')||defaults;
+function render(){document.getElementById('feed').innerHTML=videos.map((v,i)=>`<div class="card"><video src="${v.src}" loop playsinline muted onclick="this.paused?this.play():this.pause()"></video><div class="right"><div><div class="btn" style="padding:0;overflow:hidden;border:2px solid #FF0050"><img src="https://i.pravatar.cc/100?img=${i+8}" style="width:100%;height:100%"></div></div><div onclick="like(this,${i})"><div class="btn">♥</div><div class="count" id="l-${i}">${v.likes}</div></div><div><div class="btn">💬</div><div class="count">${v.coms}</div></div><div><div class="btn">↗</div><div class="count">Share</div></div></div><div class="info"><div style="font-weight:800">${v.user}</div><div style="font-size:13px;margin-top:6px">${v.cap}</div></div></div>`).join('');}
+function like(el,idx){const b=el.querySelector('.btn');b.classList.toggle('liked');}
+render();
+const obs=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){document.querySelectorAll('video').forEach(v=>{if(v!==en.target)v.pause()});en.target.play().catch(()=>{})}})}, {threshold:0.6});
+setTimeout(()=>{document.querySelectorAll('video').forEach(v=>obs.observe(v))},500);
+</script>
+</body>
+  </html>
