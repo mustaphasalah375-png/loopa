@@ -1,97 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>LOOPA - Made in Ghana</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#000000">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;color:#fff;font-family:system-ui;overflow:hidden}
-.top{position:fixed;top:0;left:0;right:0;z-index:10;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
-.logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.5px}
-.logo b{color:#FF0050}
-.tabs{font-size:12px;font-weight:600;color:#aaa;display:flex;gap:12px}
-.tabs span.active{color:#fff;border-bottom:2px solid #fff;padding-bottom:2px}
-.feed{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;background:#000}
-.feed::-webkit-scrollbar{display:none}
-.card{height:100vh;width:100%;scroll-snap-align:start;position:relative;background:#111}
-.card video{width:100%;height:100%;object-fit:cover}
-.right{position:absolute;right:8px;bottom:110px;display:flex;flex-direction:column;gap:18px;align-items:center;z-index:2}
-.btn{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer}
-.btn.liked{background:#FF0050}
-.count{font-size:11px;text-align:center;margin-top:4px;font-weight:600}
-.info{position:absolute;bottom:90px;left:12px;right:80px;z-index:2}
-.info b{font-size:15px}
-.info p{font-size:13px;color:#ddd;margin-top:4px;line-height:1.3}
-.bottom{position:fixed;bottom:0;left:0;right:0;height:64px;background:#000;border-top:1px solid #222;display:flex;justify-content:space-around;align-items:center;z-index:10}
-.nav{font-size:10px;color:#666;text-align:center;cursor:pointer;line-height:1.2}
-.nav.active{color:#fff}
-.nav i{font-size:20px;display:block}
-.plus{width:44px;height:28px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-size:20px;font-weight:900;position:relative}
-.plus::before{content:'';position:absolute;left:-3px;top:2px;width:100%;height:100%;background:#25F4EE;border-radius:8px;z-index:-1}
-.plus::after{content:'';position:absolute;right:-3px;top:2px;width:100%;height:100%;background:#FF0050;border-radius:8px;z-index:-1}
-#uploadModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:20px}
-#uploadModal.show{display:flex}
-.uploadBox{width:100%;max-width:380px;background:#1a1a1a;padding:20px;border-radius:16px}
-.uploadBox h3{margin-bottom:12px}
-.uploadBox input, .uploadBox textarea{width:100%;padding:12px;background:#222;border:1px solid #333;color:#fff;border-radius:8px;margin-bottom:10px}
-.uploadBox button{width:100%;padding:14px;background:#FF0050;border:0;color:#fff;border-radius:10px;font-weight:700;font-size:16px;cursor:pointer}
+body{background:black;color:white;font-family:sans-serif;overflow:hidden}
+.video-feed{height:100vh; overflow-y:scroll; scroll-snap-type:y mandatory}
+.video-item{height:100vh; scroll-snap-align:start; position:relative; display:flex; align-items:center; justify-content:center; background:#111; border-bottom:1px solid #222}
+video{width:100%; height:100%; object-fit:cover}
+.overlay{position:absolute; bottom:80px; left:10px; right:70px}
+.actions{position:absolute; right:10px; bottom:90px; display:flex; flex-direction:column; gap:20px; text-align:center}
+.nav{position:fixed; bottom:0; left:0; right:0; height:60px; background:black; display:flex; justify-content:space-around; align-items:center; border-top:1px solid #222; z-index:100}
+.plus-btn{background:white; color:black; width:46px; height:28px; border-radius:8px; font-size:22px; font-weight:900; display:flex; align-items:center; justify-content:center; cursor:pointer}
 </style>
 </head>
 <body>
-<div class="top">
-<div class="logo">L<b>O</b>OPA</div>
-<div class="tabs"><span class="active">For You</span><span>Friends</span><span>LIVE</span></div>
-<div style="width:20px"></div>
-</div>
-<div class="feed" id="feed"></div>
-<div class="bottom">
-<div class="nav active"><i>🏠</i>Home</div>
-<div class="nav" onclick="alert('Discover coming soon!')"><i>🔍</i>Discover</div>
-<div class="plus" onclick="openUpload()">+</div>
-<div class="nav" onclick="openInbox()"><i>💬</i>Inbox</div>
-<div class="nav" onclick="alert('Profile coming soon!')"><i>👤</i>You</div>
-</div>
-<div id="uploadModal">
-<div class="uploadBox">
-<h3>Post to LOOPA 🔥</h3>
-<input type="file" id="fileInput" accept="video/*">
-<textarea id="caption" placeholder="Caption #loopa"></textarea>
-<button id="uploadBtn" onclick="uploadVideo()">Upload</button>
-<button onclick="closeUpload()" style="background:#222;margin-top:8px">Cancel</button>
-<p id="status" style="margin-top:10px;font-size:12px;color:#aaa"></p>
-</div>
-</div>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
-// REPLACE THESE WITH YOUR REAL FIREBASE CONFIG!
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+<div class="video-feed" id="feed">
+  <div class="video-item">
+    <video src="https://www.w3schools.com/html/mov_bbb.mp4" loop autoplay muted onclick="this.paused?this.play():this.pause()"></video>
+    <div class="overlay"><h3>@loopa_demo</h3><p>This is your Loopa feed 🔥 Tap video to pause</p></div>
+    <div class="actions"><div>❤️<br>1.2k</div><div>💬<br>89</div><div>↗️<br>Share</div></div>
+  </div>
+</div>
+
+<div class="nav">
+  <span><!-- NICEST HOME ICON - TikTok style -->
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" fill="white" fill-opacity="0.15"/>
+</svg>Home</span>
+  <span><!-- DISCOVER - NICE COMPASS ICON -->
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block; margin:auto;">
+  <circle cx="12" cy="12" r="10"></circle>
+  <polygon points="16.24 7.76 14.08 20.92 19.07 14.91 7.76 16.24 9.92 3.08 14.91 9.92 16.24 7.76"></polygon>
+</svg>
+<span style="font-size:10px; margin-top:2px; display:block; text-align:center;">Discover</span>Discover</span>
+  <label for="filePicker" class="plus-btn">+</label>
+  <span><!-- INBOX ICON - BEST ONE -->
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block; margin:auto;">
+  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+</svg> Inbox</span>
+  <span>👤 You</span>
+</div>
+
+<input type="file" id="filePicker" accept="video/*" hidden>
+
+<script>
+const filePicker = document.getElementById('filePicker');
+const feed = document.getElementById('feed');
+
+filePicker.onchange = e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const url = URL.createObjectURL(file);
+  const div = document.createElement('div');
+  div.className = 'video-item';
+  div.innerHTML = `<video src="${url}" loop autoplay muted controls onclick="this.paused?this.play():this.pause()"></video><div class="overlay"><h3>@you</h3><p>${file.name} - Uploaded! (local preview, will add cloud save next)</p></div><div class="actions"><div>❤️<br>0</div><div>💬</div><div>↗️</div></div>`;
+  feed.prepend(div);
+  alert('Video added to feed! Now scroll up to see it. Next step: I will make it save online permanently.');
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
-const feed = document.getElementById('feed');
-const q = query(collection(db, "videos"), orderBy("createdAt", "desc"));
-onSnapshot(q, (snap)=>{
-  feed.innerHTML = "";
-  snap.forEach(doc=>{
-    const v = doc.data();
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <video src="${v.url}" loop playsinline onclick="this.paused?this.play():this.pause()"></video>
-      <div class="right">
-        <div><div class="btn">
+ // Tap anywhere else to trigger + if label fails on some phones
+document.querySelector('.plus-btn').onclick = ()=> filePicker.click();
+</script>
+
+</body>
+</html>
