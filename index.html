@@ -2,41 +2,96 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>LOOPA - More Than TikTok</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>LOOPA - Made in Ghana</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#FF0050">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600&family=Syne:wght@800&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#000000">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;color:#fff;font-family:'Space Grotesk',sans-serif;overflow:hidden;height:100vh}
-.top{position:fixed;top:0;left:0;right:0;z-index:20;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(to bottom,rgba(0,0,0,0.8),transparent)}
-.logo{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-1px}.logo b{color:#FF0050}
-.feed{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory}
+body{background:#000;color:#fff;font-family:system-ui;overflow:hidden}
+.top{position:fixed;top:0;left:0;right:0;z-index:10;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
+.logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.5px}
+.logo b{color:#FF0050}
+.tabs{font-size:12px;font-weight:600;color:#aaa;display:flex;gap:12px}
+.tabs span.active{color:#fff;border-bottom:2px solid #fff;padding-bottom:2px}
+.feed{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;background:#000}
 .feed::-webkit-scrollbar{display:none}
 .card{height:100vh;width:100%;scroll-snap-align:start;position:relative;background:#111}
 .card video{width:100%;height:100%;object-fit:cover}
-.right{position:absolute;right:10px;bottom:110px;display:flex;flex-direction:column;gap:20px;z-index:5}
-.btn{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid rgba(255,255,255,.2)}
+.right{position:absolute;right:8px;bottom:110px;display:flex;flex-direction:column;gap:18px;align-items:center;z-index:2}
+.btn{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer}
 .btn.liked{background:#FF0050}
-.count{font-size:11px;text-align:center;margin-top:5px;font-weight:700}
-.info{position:absolute;bottom:85px;left:12px;right:80px;text-shadow:0 2px 8px #000}
-.bottom{position:fixed;bottom:0;left:0;right:0;height:70px;background:#000;border-top:1px solid #222;display:flex;justify-content:space-around;align-items:center;z-index:20}
-.nav{font-size:10px;color:#666;text-align:center}.nav.active{color:#fff}.nav i{font-size:23px;display:block;font-style:normal}
+.count{font-size:11px;text-align:center;margin-top:4px;font-weight:600}
+.info{position:absolute;bottom:90px;left:12px;right:80px;z-index:2}
+.info b{font-size:15px}
+.info p{font-size:13px;color:#ddd;margin-top:4px;line-height:1.3}
+.bottom{position:fixed;bottom:0;left:0;right:0;height:64px;background:#000;border-top:1px solid #222;display:flex;justify-content:space-around;align-items:center;z-index:10}
+.nav{font-size:10px;color:#666;text-align:center;cursor:pointer;line-height:1.2}
+.nav.active{color:#fff}
+.nav i{font-size:20px;display:block}
+.plus{width:44px;height:28px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-size:20px;font-weight:900;position:relative}
+.plus::before{content:'';position:absolute;left:-3px;top:2px;width:100%;height:100%;background:#25F4EE;border-radius:8px;z-index:-1}
+.plus::after{content:'';position:absolute;right:-3px;top:2px;width:100%;height:100%;background:#FF0050;border-radius:8px;z-index:-1}
+#uploadModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:20px}
+#uploadModal.show{display:flex}
+.uploadBox{width:100%;max-width:380px;background:#1a1a1a;padding:20px;border-radius:16px}
+.uploadBox h3{margin-bottom:12px}
+.uploadBox input, .uploadBox textarea{width:100%;padding:12px;background:#222;border:1px solid #333;color:#fff;border-radius:8px;margin-bottom:10px}
+.uploadBox button{width:100%;padding:14px;background:#FF0050;border:0;color:#fff;border-radius:10px;font-weight:700;font-size:16px;cursor:pointer}
 </style>
 </head>
 <body>
-<div class="top"><div class="logo">L<b>O</b>OPA</div><div style="font-size:12px">For You • Friends • LIVE</div><div>⌕</div></div>
+<div class="top">
+<div class="logo">L<b>O</b>OPA</div>
+<div class="tabs"><span class="active">For You</span><span>Friends</span><span>LIVE</span></div>
+<div style="width:20px"></div>
+</div>
 <div class="feed" id="feed"></div>
-<div class="bottom"><div class="nav active"><i>⌂</i>Home</div><div class="nav"><i>◉</i>Discover</div><div class="nav"><i style="background:#fff;color:#000;width:38px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin:0 auto">+</i></div><div class="nav"><i>✉</i>Inbox</div><div class="nav"><i>☺</i>You</div></div>
-<script>
-const defaults=[{user:"@mustapha 🇬🇭",cap:"First LOOPA video! Made in Ghana #loopa",src:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",likes:1204,coms:43},{user:"@ama",cap:"Accra vibes 🔥",src:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",likes:5320,coms:120},{user:"@loopa",cap:"Welcome to LOOPA! Swipe up",src:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",likes:9820,coms:210}];
-let videos=JSON.parse(localStorage.getItem('loopa_v1')||'null')||defaults;
-function render(){document.getElementById('feed').innerHTML=videos.map((v,i)=>`<div class="card"><video src="${v.src}" loop playsinline muted onclick="this.paused?this.play():this.pause()"></video><div class="right"><div><div class="btn" style="padding:0;overflow:hidden;border:2px solid #FF0050"><img src="https://i.pravatar.cc/100?img=${i+8}" style="width:100%;height:100%"></div></div><div onclick="like(this,${i})"><div class="btn">♥</div><div class="count" id="l-${i}">${v.likes}</div></div><div><div class="btn">💬</div><div class="count">${v.coms}</div></div><div><div class="btn">↗</div><div class="count">Share</div></div></div><div class="info"><div style="font-weight:800">${v.user}</div><div style="font-size:13px;margin-top:6px">${v.cap}</div></div></div>`).join('');}
-function like(el,idx){const b=el.querySelector('.btn');b.classList.toggle('liked');}
-render();
-const obs=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){document.querySelectorAll('video').forEach(v=>{if(v!==en.target)v.pause()});en.target.play().catch(()=>{})}})}, {threshold:0.6});
-setTimeout(()=>{document.querySelectorAll('video').forEach(v=>obs.observe(v))},500);
-</script>
-</body>
-  </html>
+<div class="bottom">
+<div class="nav active"><i>🏠</i>Home</div>
+<div class="nav" onclick="alert('Discover coming soon!')"><i>🔍</i>Discover</div>
+<div class="plus" onclick="openUpload()">+</div>
+<div class="nav" onclick="openInbox()"><i>💬</i>Inbox</div>
+<div class="nav" onclick="alert('Profile coming soon!')"><i>👤</i>You</div>
+</div>
+<div id="uploadModal">
+<div class="uploadBox">
+<h3>Post to LOOPA 🔥</h3>
+<input type="file" id="fileInput" accept="video/*">
+<textarea id="caption" placeholder="Caption #loopa"></textarea>
+<button id="uploadBtn" onclick="uploadVideo()">Upload</button>
+<button onclick="closeUpload()" style="background:#222;margin-top:8px">Cancel</button>
+<p id="status" style="margin-top:10px;font-size:12px;color:#aaa"></p>
+</div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+// REPLACE THESE WITH YOUR REAL FIREBASE CONFIG!
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+const feed = document.getElementById('feed');
+const q = query(collection(db, "videos"), orderBy("createdAt", "desc"));
+onSnapshot(q, (snap)=>{
+  feed.innerHTML = "";
+  snap.forEach(doc=>{
+    const v = doc.data();
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <video src="${v.url}" loop playsinline onclick="this.paused?this.play():this.pause()"></video>
+      <div class="right">
+        <div><div class="btn">
