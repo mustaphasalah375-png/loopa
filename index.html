@@ -1,44 +1,48 @@
-L
-Loopa
-Loading...
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#000">
+<title>Loopa</title>
 
-L Loopa
-🔍
-⌂ Home 🔍 Discover ＋ ♡ Activity ♙ Profile
-←
-Search
-🔍 
-Search Loopa
-×
-Create
-＋
-Create a Loopa
-Upload a short video and share it with the Loopa community.
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-Choose video
-Write a caption...
- Publish
-👤
-@loopa_user
-Welcome to Loopa 🎬
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Arial,sans-serif}
+body{overflow:hidden}
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
 
-0 Following
-0 Followers
-0 Likes
-Edit profile
-Comments
-×
-Add a comment...
- Send
-×
-L
-Welcome to Loopa
-Create an account to continue.
+#loading{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999}
+.logo{width:70px;height:70px;border-radius:22px;background:linear-gradient(135deg,#ff0050,#792cff);display:grid;place-items:center;font-size:42px;font-weight:900}
+#loading h1{margin:15px 0 5px}
+.gray{color:#999}
 
-Username
- 
-Email
- 
-Password
- Continue
-© Developed by Salah Mustapha
+#app{height:100vh;background:#000}
+.top{position:fixed;top:0;left:0;right:0;height:60px;padding:0 15px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(#000d,transparent);z-index:10}
+.brand{display:flex;align-items:center;gap:8px;font-size:21px;font-weight:bold}
+.brand b{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#ff0050,#792cff);display:grid;place-items:center}
+.search{background:#ffffff18;color:white;border:0;border-radius:50%;width:42px;height:42px}
+
+.feed{height:100vh;overflow-y:auto;scroll-snap-type:y mandatory}
+.card{height:100vh;position:relative;scroll-snap-align:start;background:#111}
+.card video{width:100%;height:100%;object-fit:cover}
+.shade{position:absolute;inset:0;background:linear-gradient(transparent 50%,#000c)}
+.info{position:absolute;left:15px;right:90px;bottom:78px;z-index:2}
+.user{font-weight:bold;margin-bottom:10px}
+.caption{margin-bottom:8px}
+.actions{position:absolute;right:10px;bottom:80px;display:flex;flex-direction:column;gap:18px;z-index:3}
+.actions button{background:none;border:0;color:#fff;text-align:center;font-size:27px}
+.actions small{display:block;font-size:10px}
+.liked{color:#ff315f!important}
+
+.nav{position:fixed;bottom:0;left:0;right:0;height:64px;background:#000e;display:flex;justify-content:space-around;align-items:center;z-index:20}
+.nav button{background:none;border:0;color:#aaa;font-size:21px}
+.nav small{display:block;font-size:9px}
+.nav .active{color:#fff}
+.plus{background:#fff!important;color:#000!important;border-radius:10px!important;width:48px;height:34px;font-size:27px!important}
+
+.page{position:fixed;inset:0;background:#080808;z-index:50
